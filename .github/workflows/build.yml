@@ -32,26 +32,6 @@ jobs:
     - name: Build
       run: cmake --build build
 
-    - name: deploy pre-cleanup
-      uses: JesseTG/rm@v1.0.3
-      with:
-        path: src
-
-    - name: deploy pre-cleanup
-      uses: JesseTG/rm@v1.0.3
-      with:
-        path: examples
-
-    - name: deploy pre-cleanup
-      uses: JesseTG/rm@v1.0.3
-      with:
-        path: .github
-
-    - name: deploy pre-cleanup
-      uses: JesseTG/rm@v1.0.3
-      with:
-        path: .vscode
-
     - name: Deploy
       if: matrix.os == 'ubuntu-latest'
       uses: s0/git-publish-subdir-action@develop
@@ -61,6 +41,8 @@ jobs:
         FOLDER: build/build/
         SQUASH_HISTORY: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TARGET_DIR: linux
+        CLEAR_GLOBS_FILE: ".clear-target-files"
 
     - name: Deploy
       if: matrix.os == 'windows-latest'
@@ -71,3 +53,5 @@ jobs:
         FOLDER: build/build/
         SQUASH_HISTORY: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TARGET_DIR: win
+        CLEAR_GLOBS_FILE: ".clear-target-files"
