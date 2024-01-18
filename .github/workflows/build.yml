@@ -59,9 +59,8 @@ jobs:
         REPO: self
         BRANCH: binaries
         FOLDER: build/build/
-        SQUASH_HISTORY: false
+        SQUASH_HISTORY: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TARGET_DIR: linux
 
     - name: Deploy
       if: matrix.os == 'windows-latest'
@@ -70,6 +69,5 @@ jobs:
         REPO: self
         BRANCH: binaries
         FOLDER: build/build/
-        SQUASH_HISTORY: false
+        SQUASH_HISTORY: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TARGET_DIR: win
