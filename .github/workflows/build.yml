@@ -45,3 +45,12 @@ jobs:
       with:
         name: fiscodegen-latest-windows
         path: build/build
+
+    - name: Upload a release
+      if: matrix.os == 'ubuntu-latest'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+        build/build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
