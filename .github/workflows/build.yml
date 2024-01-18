@@ -28,4 +28,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: fiscodegen-linux-x64
-        path: build/bin/fiscodegen
+        path: /home/runner/work/fiscodegen/fiscodegen/build/build/bin/fiscodegen
