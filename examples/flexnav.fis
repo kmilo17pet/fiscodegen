@@ -1,0 +1,77 @@
+[System]
+Name='flexnav'
+Type='mamdani'
+Version=2.0
+NumInputs=4
+NumOutputs=2
+NumRules=15
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='wt'
+Range=[0 0.5]
+NumMFs=3
+MF1='SLOW':'trimf',[-0.2 0 0.2]
+MF2='MED':'trimf',[0.1 0.25 0.4]
+MF3='FAST':'trimf',[0.3 0.5 0.7]
+
+[Input2]
+Name='dax'
+Range=[0 5]
+NumMFs=3
+MF1='LOW':'trimf',[-1 0 2]
+MF2='MED':'trimf',[1 2.5 4]
+MF3='HIGH':'trimf',[3 5 7]
+
+[Input3]
+Name='day'
+Range=[0 5]
+NumMFs=3
+MF1='LOW':'trimf',[-2 0 2]
+MF2='MED':'trimf',[1 2.5 4]
+MF3='HIGH':'trimf',[3 5 7]
+
+[Input4]
+Name='ae'
+Range=[0 20]
+NumMFs=3
+MF1='LOW':'trimf',[-8 0 8]
+MF2='MED':'trimf',[5 10 15]
+MF3='HIGH':'trimf',[12 20 28]
+
+[Output1]
+Name='phit'
+Range=[0 1]
+NumMFs=3
+MF1='GYRO':'trimf',[-0.4 0 0.4]
+MF2='BOTH':'trimf',[0.2 0.5 0.8]
+MF3='ACCEL':'trimf',[0.6 1 1.4]
+
+[Output2]
+Name='thetat'
+Range=[0 1]
+NumMFs=3
+MF1='GYRO':'trimf',[-0.4 0 0.4]
+MF2='BOTH':'trimf',[0.2 0.5 0.8]
+MF3='ACCEL':'trimf',[0.6 1 1.4]
+
+[Rules]
+-1 0 0 0, 1 1 (1) : 1
+0 3 0 0, 0 1 (1) : 1
+0 0 3 0, 0 1 (1) : 1
+0 0 0 3, 1 1 (1) : 1
+1 1 0 1, 3 0 (1) : 1
+1 0 1 1, 0 3 (1) : 1
+1 1 0 2, 2 0 (1) : 1
+1 0 1 2, 0 2 (1) : 1
+1 2 0 1, 2 0 (1) : 1
+1 0 2 1, 0 2 (1) : 1
+2 1 0 1, 2 0 (1) : 1
+2 0 1 1, 0 2 (1) : 1
+2 -1 0 0, 1 0 (1) : 1
+2 0 -1 0, 0 1 (1) : 1
+2 0 0 -1, 1 1 (1) : 1
