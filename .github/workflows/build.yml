@@ -46,10 +46,11 @@ jobs:
         name: fiscodegen-latest-windows
         path: build/build
 
-    - name: Upload a release
+    - name: Deploy
       if: matrix.os == 'ubuntu-latest'
-      uses: softprops/action-gh-release@v1
-      with:
-        files: build/build
+      uses: s0/git-publish-subdir-action@develop
       env:
+        REPO: self
+        BRANCH: linux-binary
+        FOLDER: build/build/
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
