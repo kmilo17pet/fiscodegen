@@ -39,7 +39,7 @@ jobs:
         REPO: self
         BRANCH: binaries
         FOLDER: build/build/
-        SQUASH_HISTORY: true
+        SQUASH_HISTORY: false
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TARGET_DIR: linux
         CLEAR_GLOBS_FILE: ".clear-target-files"
@@ -51,7 +51,7 @@ jobs:
         REPO: self
         BRANCH: binaries
         FOLDER: build/build/
-        SQUASH_HISTORY: true
+        SQUASH_HISTORY: false
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TARGET_DIR: win
         CLEAR_GLOBS_FILE: ".clear-target-files"

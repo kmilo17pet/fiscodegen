@@ -1,5 +1,8 @@
 src/*
 examples/*
 .vscode/*
+.github/*
+CMakeLists.txt
+.clear-target-files
 README.md
 .gitignore
