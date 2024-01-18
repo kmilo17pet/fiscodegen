@@ -39,6 +39,7 @@ jobs:
         REPO: self
         BRANCH: binaries
         FOLDER: build/build/
+        SQUASH_HISTORY: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TARGET_DIR: linux
 
@@ -49,5 +50,6 @@ jobs:
         REPO: self
         BRANCH: binaries
         FOLDER: build/build/
+        SQUASH_HISTORY: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TARGET_DIR: win
