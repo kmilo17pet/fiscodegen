@@ -50,7 +50,6 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       uses: softprops/action-gh-release@v1
       with:
-        files: |
-        build/build
+        files: build/build
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
