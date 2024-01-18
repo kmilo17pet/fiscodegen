@@ -37,4 +37,11 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: artifacts
-        path: build
+        path: build/build
+
+    - name: Upload artifacts
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifacts
+        path: build/build
