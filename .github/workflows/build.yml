@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - 'doc/**'
+      - 'examples/**'
+      - '.vscode/**'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Set up CMake
+      uses: jwlawson/actions-setup-cmake@v1.14
+      with:
+        cmake-version: 3.21.3
+
+    - name: Configure
+      run: cmake -S . -B build
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Deploy
+      if: matrix.os == 'ubuntu-latest'
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: binaries
+        FOLDER: build/build/
+        SQUASH_HISTORY: true
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TARGET_DIR: linux
+        CLEAR_GLOBS_FILE: ".clear-target-files"
+
+    - name: Deploy
+      if: matrix.os == 'windows-latest'
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: binaries
+        FOLDER: build/build/
+        SQUASH_HISTORY: true
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TARGET_DIR: win
+        CLEAR_GLOBS_FILE: ".clear-target-files"
