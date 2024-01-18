@@ -22,7 +22,7 @@ jobs:
         submodules: recursive
 
     - name: Set up CMake
-      uses: actions/setup-cmake@v2
+      uses: jwlawson/actions-setup-cmake@v1.14
       with:
         cmake-version: 3.21.3
 
