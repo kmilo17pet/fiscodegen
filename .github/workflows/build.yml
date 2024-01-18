@@ -32,18 +32,6 @@ jobs:
     - name: Build
       run: cmake --build build
 
-
-    - name: Deploy
-      if: matrix.os == 'ubuntu-latest'
-      uses: s0/git-publish-subdir-action@develop
-      env:
-        REPO: self
-        BRANCH: binaries
-        FOLDER: build/build/
-        SQUASH_HISTORY: true
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TARGET_DIR: linux
-
     - name: deploy pre-cleanup
       uses: JesseTG/rm@v1.0.3
       with:
@@ -63,6 +51,17 @@ jobs:
       uses: JesseTG/rm@v1.0.3
       with:
         path: .vscode
+
+    - name: Deploy
+      if: matrix.os == 'ubuntu-latest'
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: binaries
+        FOLDER: build/build/
+        SQUASH_HISTORY: true
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TARGET_DIR: linux
 
     - name: Deploy
       if: matrix.os == 'windows-latest'
