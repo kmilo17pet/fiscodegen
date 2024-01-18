@@ -32,16 +32,16 @@ jobs:
     - name: Build
       run: cmake --build build
 
-    - name: Upload release
+    - name: Upload artifacts
       if: matrix.os == 'ubuntu-latest'
-      uses: softprops/action-gh-release@v1
+      uses: actions/upload-artifact@v4
       with:
-        files: fiscodegen-latest-linux
+        name: fiscodegen-latest-linux
         path: build/build
 
-   - name: Upload release
+    - name: Upload artifacts
       if: matrix.os == 'windows-latest'
-      uses: softprops/action-gh-release@v1
+      uses: actions/upload-artifact@v4
       with:
-        files: fiscodegen-latest-windows
+        name: fiscodegen-latest-windows
         path: build/build
