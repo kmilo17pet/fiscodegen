@@ -10,6 +10,8 @@
 #include <cstring>
 #include <cmath>
 
+static const std::string FISCODEGEN_VERSION = "0.1.2";
+
 struct FuzzySystem {
     std::map<std::string, std::string> systemInfo;
     std::map<std::string, std::map<std::string, std::string>> inputInfo;
@@ -287,7 +289,7 @@ std::string strUpper( std::string str )
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         std::cout << "fiscodegen : C/C++ code generation from a FIS(Fuzzy Inference System)" << std::endl;
-        std::cout << "Version : 0.1.2\n" << std::endl;
+        std::cout << "Version : " + FISCODEGEN_VERSION + "\n" << std::endl;
         std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
         return 1; // Return an error code
     }
