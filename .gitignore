@@ -27,7 +27,7 @@
 *.lib
 
 # Executables
-*.exe
+*.pdb
 *.out
 *.app
 

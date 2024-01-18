@@ -32,20 +32,6 @@ jobs:
     - name: Build
       run: cmake --build build
 
-    - name: Upload artifacts
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v4
-      with:
-        name: fiscodegen-latest-linux
-        path: build/build
-
-    - name: Upload artifacts
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v4
-      with:
-        name: fiscodegen-latest-windows
-        path: build/build
-
     - name: Deploy
       if: matrix.os == 'ubuntu-latest'
       uses: s0/git-publish-subdir-action@develop
