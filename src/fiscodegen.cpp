@@ -13,7 +13,7 @@
 #include <regex>
 
 
-static const std::string FISCODEGEN_VERSION = "0.1.4";
+static const std::string FISCODEGEN_VERSION = "0.1.5";
 
 struct FuzzySystem {
     std::map<std::string, std::string> systemInfo;
@@ -298,7 +298,7 @@ bool downloadFile( std::string url, std::string destination )
     const std::string filename = extractFilenameFromURL(url);
     const std::string outFilename = "\"" + destination + "/" + filename + "\"";
     std::cout << "- Downloading " << filename << " to " << outFilename << std::endl;
-    const std::string cmd = "curl -sS -LJO " + url + " --output-dir " + destination;
+    const std::string cmd = "curl -# -LJO " + url + " --output-dir " + destination;
     //std::cout << cmd << std::endl;
     system( cmd.c_str() );
     return true;
@@ -604,8 +604,8 @@ int main(int argc, char *argv[]) {
     gen += "}\n\n";
     //std::cout << "===============================================" << std::endl;
     //std::cout << gen << std::endl;
-    std::cout << "- Writing file " << fisVarName+".cpp ..." << std::endl;
 
+    std::cout << "- Obtaining qFIS engine from https://github.com/kmilo17pet/qlibs-cpp..." << std::endl;
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::string srcDestination = currentPath.string() + "/generated";
     std::string incDestination = currentPath.string() + "/generated/include";
@@ -623,20 +623,15 @@ int main(int argc, char *argv[]) {
         "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/fis.hpp",
         "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/ffmath.hpp"
     };
-    writeFile( genFileName, gen );
-    std::cout << "- Obtaining qFIS engine from https://github.com/kmilo17pet/qlibs-cpp..." << std::endl;
-
     for( std::string iFile : fis_src ){
         downloadFile( iFile, "generated" );
     }
     for( std::string iFile : fis_inc ){
         downloadFile( iFile, "generated/include" );
     }
-
-    std::cout << "- Organizing generated files... " <<  currentPath << std::endl;
-
-
-    //system("rm *.hpp");
+    std::cout << "- Writing FIS system to " << "generated/"+ fisVarName+".cpp" << std::endl;
+    writeFile( genFileName, gen );
     std::cout << "Completed!" << std::endl;
+    std::cout << "Check generated files on " << currentPath << "/generated"<< std::endl;
     return 0;
 }
