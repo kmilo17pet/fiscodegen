@@ -326,7 +326,8 @@ int main(int argc, char *argv[]) {
     auto fisVarName = createVariableName( fis.systemInfo["Name"] );
 
     std::string gen =
-    "#include <qlibs.h>\n\n"
+    "#include <include/fis.hpp>\n\n"
+    "using namespace qlibs;\n\n"
     "\n";
 
     int nInputs = std::stoi( fis.systemInfo["NumInputs"] );
@@ -556,10 +557,41 @@ int main(int argc, char *argv[]) {
 
     gen += "}\n\n";
     //std::cout << "===============================================" << std::endl;
-    std::cout << gen << std::endl;
+    //std::cout << gen << std::endl;
     std::cout << "- Writing file " << fisVarName+".cpp ..." << std::endl;
 
     writeFile( fisVarName+".cpp", gen );
+    std::cout << "- Obtaining qFIS engine... " << std::endl;
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/fisCore.cpp");
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/fis.cpp");
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/ffmath.cpp");
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/mathex.cpp");
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/fis.hpp");
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/ffmath.hpp");
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/qlibs_types.hpp");
+    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/mathex.hpp");
+    #ifdef _WIN32
+        system("mkdir generated > nul 2>&1");
+        system("mkdir generated/include > nul 2>&1");
+        system("mv *.hpp generated/include/ > nul 2>&1");
+        system("mv *.cpp generated/ > nul 2>&1");
+    #elif __linux__
+        system("mkdir generated > /dev/null 2>&1");
+        system("mkdir -p generated/include > /dev/null 2>&1");
+        system("mv *.hpp generated/include/ > /dev/null 2>&1");
+        system("mv *.cpp generated/ > /dev/null 2>&1");
+    #elif __APPLE__
+        system("mkdir generated > /dev/null 2>&1");
+        system("mkdir  generated/include > /dev/null 2>&1");
+        system("mv *.hpp generated/include/ > /dev/null 2>&1");
+        system("mv *.cpp generated/ > /dev/null 2>&1");
+    #else
+        system("mkdir generated > nul 2>&1");
+        system("mkdir generated/include > nul 2>&1");
+        system("mv *.hpp generated/include/ > nul 2>&1");
+        system("mv *.cpp generated/ > nul 2>&1");
+    #endif
+    //system("rm *.hpp");
     std::cout << "Completed!" << std::endl;
     return 0;
 }
