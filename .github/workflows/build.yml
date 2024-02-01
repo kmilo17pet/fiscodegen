@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
     - name: Checkout repository and submodules
@@ -56,4 +56,16 @@ jobs:
         SQUASH_HISTORY: false
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TARGET_DIR: win
+        CLEAR_GLOBS_FILE: ".clear-target-files"
+
+    - name: Deploy
+      if: matrix.os == 'macos-latest'
+      uses: s0/git-publish-subdir-action@develop
+      env:
+        REPO: self
+        BRANCH: binaries
+        FOLDER: build/build/
+        SQUASH_HISTORY: false
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TARGET_DIR: mac
         CLEAR_GLOBS_FILE: ".clear-target-files"
