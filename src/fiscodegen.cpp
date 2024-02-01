@@ -13,7 +13,7 @@
 #include <regex>
 
 
-static const std::string FISCODEGEN_VERSION = "0.1.5";
+static const std::string FISCODEGEN_VERSION = "0.1.6";
 
 struct FuzzySystem {
     std::map<std::string, std::string> systemInfo;
@@ -298,7 +298,7 @@ bool downloadFile( std::string url, std::string destination )
     const std::string filename = extractFilenameFromURL(url);
     const std::string outFilename = "\"" + destination + "/" + filename + "\"";
     std::cout << "- Downloading " << filename << " to " << outFilename << std::endl;
-    const std::string cmd = "curl -# -LJO " + url + " --output-dir " + destination;
+    const std::string cmd = "curl -sS -LJO " + url + " --output-dir " + destination  + " > curl_log.txt 2>&1";
     //std::cout << cmd << std::endl;
     system( cmd.c_str() );
     return true;
