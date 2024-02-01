@@ -9,8 +9,11 @@
 #include <memory>
 #include <cstring>
 #include <cmath>
+#include <filesystem>
+#include <regex>
 
-static const std::string FISCODEGEN_VERSION = "0.1.2";
+
+static const std::string FISCODEGEN_VERSION = "0.1.4";
 
 struct FuzzySystem {
     std::map<std::string, std::string> systemInfo;
@@ -83,14 +86,6 @@ ioRange getRangeFromString( std::string s )
     }
 
     return rOut;
-}
-/*============================================================================*/
-int downloadFile( const std::string &url, const std::string &destination )
-{
-    const std::string command = "curl -# -o ";
-    std::string fullCommand = command + destination + " " + url;
-    int result = system(fullCommand.c_str());
-    return result;
 }
 /*============================================================================*/
 std::string trim(const std::string & sStr)
@@ -284,6 +279,57 @@ std::string strUpper( std::string str )
 {
     std::transform(str.begin(), str.end(), str.begin(), ::toupper);
     return str;
+}
+/*============================================================================*/
+std::string extractFilenameFromURL(const std::string& url) {
+    // Use a regex to extract the part after the last '/'
+    std::regex regex("/([^/]+)$");
+    std::smatch match;
+
+    if (std::regex_search(url, match, regex)) {
+        return match[1];
+    } else {
+        return ""; // No match found
+    }
+}
+/*============================================================================*/
+bool downloadFile( std::string url, std::string destination )
+{
+    const std::string filename = extractFilenameFromURL(url);
+    const std::string outFilename = "\"" + destination + "/" + filename + "\"";
+    std::cout << "- Downloading " << filename << " to " << outFilename << std::endl;
+    const std::string cmd = "curl -sS -LJO " + url + " --output-dir " + destination;
+    //std::cout << cmd << std::endl;
+    system( cmd.c_str() );
+    return true;
+}
+/*============================================================================*/
+bool createDirectory( const std::string dirPath )
+{
+    std::filesystem::path existingDirectoryPath = dirPath;
+
+    // Attempt to create the directory
+    try {
+        std::filesystem::create_directory(existingDirectoryPath);
+        std::cout << "Directory created successfully or already exists: " << existingDirectoryPath << std::endl;
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Error creating directory: " << e.what() << std::endl;
+    }
+    return true;
+}
+/*============================================================================*/
+bool removeDirectory( const std::string dirPath )
+{
+    std::filesystem::path directoryPath = dirPath;
+
+    // Remove the directory
+    try {
+        std::filesystem::remove(directoryPath);
+        std::cout << "Directory removed successfully: " << directoryPath << std::endl;
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Error removing directory: " << e.what() << std::endl;
+    }
+    return true;
 }
 /*============================================================================*/
 int main(int argc, char *argv[]) {
@@ -500,10 +546,10 @@ int main(int argc, char *argv[]) {
     fisType[0] = std::toupper(fisType[0]);
     gen += "    " + fisVarName + ".setup( fis::" + fisType + ", " + fisVarName + "_inputs, " + fisVarName + "_outputs, MFin, MFout, rules, rStrength );\n";
 
-    gen += "    " + fisVarName + ".setParameter( FIS_AND, fis::FIS_" + strUpper(fis.systemInfo["AndMethod"]) + " );\n";
-    gen += "    " + fisVarName + ".setParameter( FIS_OR, fis::FIS_" + strUpper(fis.systemInfo["OrMethod"]) + " );\n";
-    gen += "    " + fisVarName + ".setParameter( FIS_Implication, fis::FIS_" + strUpper(fis.systemInfo["ImpMethod"]) + " );\n";
-    gen += "    " + fisVarName + ".setParameter( FIS_Aggregation, fis::FIS_" + strUpper(fis.systemInfo["AggMethod"]) + " );\n";
+    gen += "    " + fisVarName + ".setParameter( fis::FIS_AND, fis::FIS_" + strUpper(fis.systemInfo["AndMethod"]) + " );\n";
+    gen += "    " + fisVarName + ".setParameter( fis::FIS_OR, fis::FIS_" + strUpper(fis.systemInfo["OrMethod"]) + " );\n";
+    gen += "    " + fisVarName + ".setParameter( fis::FIS_Implication, fis::FIS_" + strUpper(fis.systemInfo["ImpMethod"]) + " );\n";
+    gen += "    " + fisVarName + ".setParameter( fis::FIS_Aggregation, fis::FIS_" + strUpper(fis.systemInfo["AggMethod"]) + " );\n";
     gen += "    " + fisVarName + ".setDeFuzzMethod( fis::" + fis.systemInfo["DefuzzMethod"] + " );\n";
 
     for ( size_t i = 0; i < inputTags.size() ; ++i ) {
@@ -560,37 +606,36 @@ int main(int argc, char *argv[]) {
     //std::cout << gen << std::endl;
     std::cout << "- Writing file " << fisVarName+".cpp ..." << std::endl;
 
-    writeFile( fisVarName+".cpp", gen );
-    std::cout << "- Obtaining qFIS engine... " << std::endl;
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/fisCore.cpp");
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/fis.cpp");
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/ffmath.cpp");
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/mathex.cpp");
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/fis.hpp");
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/ffmath.hpp");
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/qlibs_types.hpp");
-    system("curl -LJO -s https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/mathex.hpp");
-    #ifdef _WIN32
-        system("mkdir generated > nul 2>&1");
-        system("mkdir generated/include > nul 2>&1");
-        system("mv *.hpp generated/include/ > nul 2>&1");
-        system("mv *.cpp generated/ > nul 2>&1");
-    #elif __linux__
-        system("mkdir generated > /dev/null 2>&1");
-        system("mkdir -p generated/include > /dev/null 2>&1");
-        system("mv *.hpp generated/include/ > /dev/null 2>&1");
-        system("mv *.cpp generated/ > /dev/null 2>&1");
-    #elif __APPLE__
-        system("mkdir generated > /dev/null 2>&1");
-        system("mkdir  generated/include > /dev/null 2>&1");
-        system("mv *.hpp generated/include/ > /dev/null 2>&1");
-        system("mv *.cpp generated/ > /dev/null 2>&1");
-    #else
-        system("mkdir generated > nul 2>&1");
-        system("mkdir generated/include > nul 2>&1");
-        system("mv *.hpp generated/include/ > nul 2>&1");
-        system("mv *.cpp generated/ > nul 2>&1");
-    #endif
+    std::filesystem::path currentPath = std::filesystem::current_path();
+    std::string srcDestination = currentPath.string() + "/generated";
+    std::string incDestination = currentPath.string() + "/generated/include";
+    std::string genFileName = srcDestination + "/" + fisVarName + ".cpp";
+
+    createDirectory( srcDestination );
+    createDirectory( incDestination );
+    std::vector<std::string> fis_src = {
+        "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/fisCore.cpp",
+        "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/fis.cpp",
+        "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/ffmath.cpp"
+    };
+    std::vector<std::string> fis_inc = {
+        "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/qlibs_types.hpp",
+        "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/fis.hpp",
+        "https://github.com/kmilo17pet/qlibs-cpp/raw/main/src/include/ffmath.hpp"
+    };
+    writeFile( genFileName, gen );
+    std::cout << "- Obtaining qFIS engine from https://github.com/kmilo17pet/qlibs-cpp..." << std::endl;
+
+    for( std::string iFile : fis_src ){
+        downloadFile( iFile, "generated" );
+    }
+    for( std::string iFile : fis_inc ){
+        downloadFile( iFile, "generated/include" );
+    }
+
+    std::cout << "- Organizing generated files... " <<  currentPath << std::endl;
+
+
     //system("rm *.hpp");
     std::cout << "Completed!" << std::endl;
     return 0;
